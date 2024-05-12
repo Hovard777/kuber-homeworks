@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-sharing-pod
+  labels:
+    app: data-sharing-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-sharing-pod
+  template:
+    metadata:
+      labels:
+        app: data-sharing-pod
+    spec:
+      volumes:
+        - name: shared-data
+          emptyDir: { }
+      containers:
+        - name: busybox
+          image: busybox
+          command: [ "/bin/sh", "-c", "while true; do date >> /shared-busybox/data.txt; sleep 5; done" ]
+          volumeMounts:
+            - name: shared-data
+              mountPath: /shared-busybox
+        - name: multitool
+          image: wbitt/network-multitool
+          volumeMounts:
+            - name: shared-data
+              mountPath: /shared-multitool
