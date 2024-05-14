@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: update-deployment
+  labels:
+    app: update-pod
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: update-pod
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: update-pod
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx:1.20
+        ports:
+          - containerPort: 80
+        env:
+          - name: NGINX_PORT
+            value: "80"
+          - name: NGINX_LISTEN
+            value: "0.0.0.0"
+      - name: multitool-container
+        image: wbitt/network-multitool
+        ports:
+          - containerPort: 8080
+            name: http-port
+        env:
+          - name: HTTP_PORT
+            value: "8080"
