@@ -63,7 +63,23 @@ drwxr-xr-x 16 root root 4096 мая 13 21:14 ../
 Создать Deployment приложения, которое может хранить файлы на NFS с динамическим созданием PV.
 
 1. Включить и настроить NFS-сервер на MicroK8S.
-2. Создать Deployment приложения состоящего из multitool, и подключить к нему PV, созданный автоматически на сервере NFS.
+```commandline
+ifebres@ifebres-nb:~/.kube$ kubectl get sc
+NAME   PROVISIONER                            RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+nfs    cluster.local/nfs-server-provisioner   Delete          Immediate           true                   24h
+```
+2. Создать Deployment приложения состоящего из multitool, и подключить к нему PV, созданный автоматически на сервере NFS. [deployment_nfs.yaml](src%2Fdeployment_nfs.yaml), [nfs-pvc.yaml](src%2Fnfs-pvc.yaml)
 3. Продемонстрировать возможность чтения и записи файла изнутри пода. 
-4. Предоставить манифесты, а также скриншоты или вывод необходимых команд.
+```commandline
+ifebres@ifebres-nb:~/github/kuber-homeworks/2.2/src$ kubectl get pod
+NAME                       READY   STATUS    RESTARTS   AGE
+nfs-app-657d7fbfc5-9jkkb   1/1     Running   0          10s
+ifebres@ifebres-nb:~/github/kuber-homeworks/2.2/src$ kubectl exec -it nfs-app-657d7fbfc5-9jkkb -c multitool -- /bin/sh
+/ # cd shared-data/
+/shared-data # ls
+/shared-data # date > simple.txt
+/shared-data # cat simple.txt 
+Tue May 14 19:53:46 UTC 2024
+```
+
 

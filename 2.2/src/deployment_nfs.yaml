@@ -1,32 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: data-pv-pod
+  name: nfs-app
   labels:
-    app: data-pv-pod
+    app: nfs
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: data-pv-pod
+      app: nfs
   template:
     metadata:
       labels:
-        app: data-pv-pod
+        app: nfs
     spec:
-      volumes:
-        - name: shared-data
-          persistentVolumeClaim:
-            claimName: nfs-storage
       containers:
-        - name: busybox
-          image: busybox
-          command: [ "/bin/sh", "-c", "while true; do date >> /shared-busybox/data.txt; sleep 5; done" ]
-          volumeMounts:
-            - name: shared-data
-              mountPath: /mnt/nfs
         - name: multitool
           image: wbitt/network-multitool
           volumeMounts:
-            - name: shared-data
-              mountPath: /mnt/nfs
+            - mountPath: /shared-data
+              name: volume-01
+      volumes:
+        - name: volume-01
+          persistentVolumeClaim:
+            claimName: pvc-01
